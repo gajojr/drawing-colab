@@ -1,10 +1,13 @@
 import React from 'react';
+import Form from '../../components/HomePageComponents/Form/Form.component';
+
+import * as Styled from './HomePage.styles';
 
 const HomePage = () => {
     return (
-        <div>
-            <p>Ovo ti je home page bajo moj</p>
-        </div>
+        <Styled.Container>
+            <Form />
+        </Styled.Container>
     )
 }
 

@@ -7,12 +7,10 @@ import DrawingPage from './pages/DrawingPage/DrawingPage';
 function App() {
   return (
     <Router>
-      <div>
-        <Switch>
-          <Route path="/" exact component={HomePage} />
-          <Route path="/drawing-page" component={DrawingPage} />
-        </Switch>
-      </div>
+      <Switch>
+        <Route path="/" exact component={HomePage} />
+        <Route path="/drawing-page" component={DrawingPage} />
+      </Switch>
     </Router>
   );
 }
