@@ -9,6 +9,10 @@ export const Form = styled.form `
     -webkit-box-shadow: 0px 0px 30px 0px rgba(21,31,99,1);
     -moz-box-shadow: 0px 0px 30px 0px rgba(21,31,99,1);
     box-shadow: 0px 0px 30px 0px rgba(21,31,99,1);
+
+    @media(max-width: 410px) {
+        transform: scale(0.95);
+    }
 `;
 
 export const Legend = styled.legend `

@@ -6,4 +6,8 @@ export const Container = styled.main `
     justify-content: center;
     align-items: center;
     background-color: #333744;
+
+    @media(max-width: 395px) {
+        flex-direction: column;
+    }
 `;
