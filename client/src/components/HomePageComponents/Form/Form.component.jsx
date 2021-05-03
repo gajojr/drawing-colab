@@ -10,14 +10,15 @@ const Form = () => {
     }
 
     return (
-        <form onSubmit={onSubmit}>
+        <Styled.Form onSubmit={onSubmit}>
+            <Styled.Legend>Drawing collab</Styled.Legend>
             <Styled.Label htmlFor="username">username:</Styled.Label>
-            <Styled.Input id="username" type="text" />
+            <Styled.TextInput id="username" type="text" />
             <Styled.Label htmlFor="room">room:</Styled.Label>
-            <Styled.Input id="room" type="text" />
+            <Styled.TextInput id="room" type="text" />
 
-            <Styled.Input type="submit" value="join" />
-        </form>
+            <Styled.Submit type="submit" value="Join" />
+        </Styled.Form>
     )
 }
 
