@@ -2,12 +2,12 @@ import React from 'react';
 
 import * as Styled from './ActiveRooms.styles';
 
-const rooms = ['soba1', 'soba2', 'soba1soba111soba111111', 'soba4', 'soba5'];
+const rooms = ['soba1', 'soba2', 'soba3', 'soba4', 'soba5'];
 
 const ActiveRooms = () => {
     return (
         <Styled.ActiveRoomsContainer>
-            <Styled.Header>Active rooms:</Styled.Header>
+            <Styled.Header>{rooms.length ? `Active rooms:` : null}</Styled.Header>
             <Styled.ListOfRooms style={{ overflowY: rooms.length < 4 ? 'hidden' : 'scroll' }}>
                 {rooms.map((item, idx) => (
                     <Styled.ListItem key={idx}>
