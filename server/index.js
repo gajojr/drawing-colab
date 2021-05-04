@@ -30,9 +30,8 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 io.on('connection', socket => {
-    socket.on('showActiveRooms', () => {
-        socket.emit('activeRooms', ['soba1', 'soba2', 'soba3', 'soba4', 'soba5'])
-    });
+    console.log('new user joined');
+    socket.emit('showActiveRooms', ['soba1', 'soba2', 'soba3', 'soba4', 'soba5']);
 
     socket.on('disconnect', () => {
         console.log('Client disconnected');

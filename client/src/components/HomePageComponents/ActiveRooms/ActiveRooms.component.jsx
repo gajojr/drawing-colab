@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 
 import * as Styled from './ActiveRooms.styles';
 
-const rooms = ['soba1', 'soba2', 'soba3', 'soba4', 'soba5'];
+const ActiveRooms = () => {
+    const [activeRooms, setActiveRooms] = useState([]);
 
-const ActiveRooms = ({ activeRooms }) => {
-    // const activeRooms2 = activeRooms;
+    useEffect(() => {
+        const socket = io('http://localhost:8080');
+        socket.on('showActiveRooms', data => {
+            console.log(data);
+            setActiveRooms(data);
+        });
+    }, []);
 
     return (
         <Styled.ActiveRoomsContainer>
-            <Styled.Header>{rooms.length ? `Active rooms:` : null}</Styled.Header>
-            <Styled.ListOfRooms style={{ overflowY: rooms.length < 4 ? 'hidden' : 'scroll' }}>
-                {rooms.map((item, idx) => (
+            <Styled.Header>{activeRooms.length ? `Active rooms:` : null}</Styled.Header>
+            <Styled.ListOfRooms style={{ overflowY: activeRooms.length < 4 ? 'hidden' : 'scroll' }}>
+                {activeRooms.map((item, idx) => (
                     <Styled.ListItem key={idx}>
                         <Styled.RoomName>
                             {/* truncate the text if it's too long */}
