@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 const path = require('path');
 const favicon = require('serve-favicon');
 const cors = require('cors');
@@ -8,11 +10,6 @@ const helmet = require('helmet');
 const PORT = process.env.PORT || 8080;
 
 // const indexRouter = require('./routes/index');
-// const testAPIRouter = require('./routes/testAPI');
-// const animationsRouter = require('./routes/animations');
-// const loginRouter = require('./routes/login').router;
-// const registerPage = require('./routes/register-page');
-// const animationList = require('./routes/animation-list');
 
 const app = express();
 
@@ -23,24 +20,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, '../client/public/favicon.ico')));
 app.use(compression());
 app.use(helmet());
+if (process.env.NODE_ENV === 'production') {
+    app.use(helmet());
+}
 
 // app.use('/', indexRouter);
-// app.use('/testAPI', testAPIRouter);
-// app.use('/animations', animationsRouter);
-// app.use('/login', loginRouter);
-// app.use('/register', registerPage);
-// app.use('/animation-list', animationList);
 
-// if (process.env.NODE_ENV === 'production') {
-//     app.use(express.static('../client/build'));
+const server = http.createServer(app);
+const io = socketIo(server);
 
-//     app.get('*', (req, res) => {
-//         res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'));
-//     });
-// }
+io.on('connection', socket => {
+    socket.on('showActiveRooms', () => {
+        socket.emit('activeRooms', ['soba1', 'soba2', 'soba3', 'soba4', 'soba5'])
+    });
 
-app.get('/temp', (req, res) => res.json('temporary route'));
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
 
-app.listen(PORT, () => {
+// app.get('/temp', (req, res) => res.json('temporary route'));
+
+server.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);
 });
