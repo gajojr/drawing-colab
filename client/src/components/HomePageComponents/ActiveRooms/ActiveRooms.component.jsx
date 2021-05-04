@@ -3,16 +3,31 @@ import { io } from 'socket.io-client';
 
 import * as Styled from './ActiveRooms.styles';
 
+import { formValidation } from '../Form/Form.component';
+
 const ActiveRooms = () => {
     const [activeRooms, setActiveRooms] = useState([]);
 
     useEffect(() => {
         const socket = io('http://localhost:8080');
         socket.on('showActiveRooms', data => {
-            console.log(data);
             setActiveRooms(data);
         });
     }, []);
+
+    const joinUser = room => {
+        const username = document.getElementById('username').value;
+
+        formValidation(username, room);
+
+        const socket = io('http://localhost:8080');
+        socket.emit('join', { username, room }, error => {
+            if (error) {
+                alert(error);
+                window.location.href = '/';
+            }
+        });
+    }
 
     return (
         <Styled.ActiveRoomsContainer>
@@ -24,7 +39,7 @@ const ActiveRooms = () => {
                             {/* truncate the text if it's too long */}
                             {window.innerWidth > 395 ? (item.length > 11 ? item.slice(0, 10) + '...' : item) : (item.length > 20 ? item.slice(0, 20) + '...' : item)}
                         </Styled.RoomName>
-                        <Styled.JoinBtn>Join</Styled.JoinBtn>
+                        <Styled.JoinBtn onClick={() => joinUser(item)}>Join</Styled.JoinBtn>
                     </Styled.ListItem>)
                 )}
             </Styled.ListOfRooms>
