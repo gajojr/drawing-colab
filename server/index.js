@@ -7,6 +7,8 @@ const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
 
+const { addUser, removeUser, getUser, getUsersInRoom, addRoom, getRooms, removeRoom } = require('./utils/users');
+
 const PORT = process.env.PORT || 8080;
 
 // const indexRouter = require('./routes/index');
@@ -30,11 +32,45 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 io.on('connection', socket => {
-    console.log('new user joined');
-    socket.emit('showActiveRooms', ['soba1', 'soba2', 'soba3', 'soba4', 'soba5']);
+    socket.emit('showActiveRooms', getRooms());
+
+    socket.on('join', ({ username, room }, callback) => {
+        const { error, user } = addUser({ id: socket.id, username, room });
+
+        if (error) {
+            return callback(error);
+        }
+
+        socket.join(user.room);
+        // check if this room is new
+        const answer = addRoom(io, user.room);
+        // if it's new add it to the list of active rooms
+        if (answer === user.room) {
+            io.emit('showActiveRooms', getRooms());
+        }
+
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        });
+
+        callback();
+    });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        const user = removeUser(socket.id);
+
+        if (user) {
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            });
+
+            if (!io.sockets.adapter.rooms.get(user.room)) {
+                removeRoom(user.room);
+                io.emit('showActiveRooms', getRooms());
+            }
+        }
     });
 });
 
