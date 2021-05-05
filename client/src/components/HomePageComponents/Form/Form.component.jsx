@@ -35,9 +35,7 @@ const Form = () => {
             }
         });
 
-        socket.on('roomData', ({ room, users }) => {
-            console.log(room, users);
-        });
+        window.location.href = '/drawing-page';
     }
 
     return (

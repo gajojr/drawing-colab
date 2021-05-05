@@ -27,6 +27,8 @@ const ActiveRooms = () => {
                 window.location.href = '/';
             }
         });
+
+        window.location.href = '/drawing-page';
     }
 
     return (
