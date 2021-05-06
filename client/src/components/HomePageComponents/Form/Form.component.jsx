@@ -1,5 +1,5 @@
 import React from 'react';
-import { io } from 'socket.io-client';
+import socket from '../../ClientSocket/ClientSocket';
 
 import * as Styled from './Form.styles';
 
@@ -27,7 +27,6 @@ const Form = () => {
 
         formValidation(username, room);
 
-        const socket = io('http://localhost:8080');
         socket.emit('join', { username, room }, error => {
             if (error) {
                 alert(error);
@@ -39,7 +38,7 @@ const Form = () => {
     }
 
     return (
-        <Styled.Form onSubmit={onSubmit}>
+        <Styled.Form onSubmit={onSubmit} >
             <Styled.Legend>Drawing collab</Styled.Legend>
             <Styled.Label htmlFor="username">username:</Styled.Label>
             <Styled.TextInput id="username" type="text" required />

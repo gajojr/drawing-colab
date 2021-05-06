@@ -43,28 +43,29 @@ io.on('connection', socket => {
 
         socket.join(user.room);
         // check if this room is new
-        const answer = addRoom(io, user.room);
+        const answer = addRoom(user.room);
         // if it's new add it to the list of active rooms
         if (answer === user.room) {
             io.emit('showActiveRooms', getRooms());
         }
 
-        io.to(user.room).emit('roomData', {
-            room: user.room,
-            users: getUsersInRoom(user.room)
-        });
+        // io.to(user.room).emit('roomData', {
+        //     room: user.room,
+        //     users: getUsersInRoom(user.room)
+        // });
 
         callback();
     });
 
+    // registruje da je napustio kada se promeni adresa preko window.location.href = '/drawing-page'
     socket.on('disconnect', () => {
         const user = removeUser(socket.id);
 
         if (user) {
-            io.to(user.room).emit('roomData', {
-                room: user.room,
-                users: getUsersInRoom(user.room)
-            });
+            // io.to(user.room).emit('roomData', {
+            //     room: user.room,
+            //     users: getUsersInRoom(user.room)
+            // });
 
             if (!io.sockets.adapter.rooms.get(user.room)) {
                 removeRoom(user.room);

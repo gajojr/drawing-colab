@@ -45,7 +45,7 @@ const getUsersInRoom = room => {
     return users.filter(user => user.room === room);
 }
 
-const addRoom = (io, room) => {
+const addRoom = (room) => {
     if (rooms.indexOf(room) === -1) {
         rooms.push(room);
 

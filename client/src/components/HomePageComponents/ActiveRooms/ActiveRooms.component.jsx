@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { io } from 'socket.io-client';
+import socket from '../../ClientSocket/ClientSocket';
 
 import * as Styled from './ActiveRooms.styles';
 
@@ -9,8 +9,8 @@ const ActiveRooms = () => {
     const [activeRooms, setActiveRooms] = useState([]);
 
     useEffect(() => {
-        const socket = io('http://localhost:8080');
         socket.on('showActiveRooms', data => {
+            console.log(`sobe: ${data}`);
             setActiveRooms(data);
         });
     }, []);
@@ -20,7 +20,6 @@ const ActiveRooms = () => {
 
         formValidation(username, room);
 
-        const socket = io('http://localhost:8080');
         socket.emit('join', { username, room }, error => {
             if (error) {
                 alert(error);
