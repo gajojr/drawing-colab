@@ -75,8 +75,6 @@ io.on('connection', socket => {
     });
 });
 
-// app.get('/temp', (req, res) => res.json('temporary route'));
-
 server.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);
 });
