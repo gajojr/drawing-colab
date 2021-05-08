@@ -6,16 +6,21 @@ import * as Styled from './Form.styles';
 // for reuse in ActiveRooms.component.jsx 
 export const formValidation = (username, room) => {
     if (!username || !room) {
-        return alert('Room and username must be provided');
+        alert('Room and username must be provided');
+        return false;
     }
 
     if (username.length < 4 || room.length < 4) {
-        return alert('Room and username must be at least 4 characters long');
+        alert('Room and username must be at least 4 characters long');
+        return false;
     }
 
     if (username.length > 30 || room.length > 30) {
-        return alert('Room and username can\'t be longer than 30 characters');
+        alert('Room and username can\'t be longer than 30 characters');
+        return false;
     }
+
+    return true;
 }
 
 const Form = () => {
@@ -25,7 +30,9 @@ const Form = () => {
         const username = e.target.username.value;
         const room = e.target.room.value;
 
-        formValidation(username, room);
+        if (!formValidation(username, room)) {
+            return;
+        }
 
         socket.emit('join', { username, room }, error => {
             if (error) {

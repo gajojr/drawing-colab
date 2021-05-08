@@ -18,7 +18,9 @@ const ActiveRooms = () => {
     const joinUser = room => {
         const username = document.getElementById('username').value;
 
-        formValidation(username, room);
+        if (!formValidation(username, room)) {
+            return;
+        }
 
         socket.emit('join', { username, room }, error => {
             if (error) {
