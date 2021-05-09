@@ -1,5 +1,4 @@
 import React from 'react';
-import socket from '../../ClientSocket/ClientSocket';
 
 import * as Styled from './Form.styles';
 
@@ -23,7 +22,7 @@ export const formValidation = (username, room) => {
     return true;
 }
 
-const Form = () => {
+const Form = ({ socket }) => {
     const onSubmit = e => {
         e.preventDefault();
 

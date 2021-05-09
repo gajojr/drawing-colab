@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import socket from '../../ClientSocket/ClientSocket';
 
 import * as Styled from './ActiveRooms.styles';
 
 import { formValidation } from '../Form/Form.component';
 
-const ActiveRooms = () => {
+const ActiveRooms = ({ socket }) => {
     const [activeRooms, setActiveRooms] = useState([]);
 
     useEffect(() => {
