@@ -58,7 +58,9 @@ io.on('connection', socket => {
     });
 
     // registruje da je napustio kada se promeni adresa preko window.location.href = '/drawing-page'
-    socket.on('disconnect', () => {
+    // reason je transport close i kad promeni url i kad se zatvori prozor
+    socket.on('disconnect', reason => {
+        console.log(`razlog: ${reason}`);
         const user = removeUser(socket.id);
 
         if (user) {
