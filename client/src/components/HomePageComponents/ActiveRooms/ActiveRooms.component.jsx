@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 
 import * as Styled from './ActiveRooms.styles';
 
 import { formValidation } from '../Form/Form.component';
+import { SocketContext } from '../../../context/socket.js';
 
-const ActiveRooms = ({ socket }) => {
+const ActiveRooms = () => {
     const [activeRooms, setActiveRooms] = useState([]);
+    const socket = useContext(SocketContext);
 
     useEffect(() => {
         socket.on('showActiveRooms', data => {
@@ -14,7 +16,7 @@ const ActiveRooms = ({ socket }) => {
         });
     }, []);
 
-    const joinUser = room => {
+    const joinUser = useCallback(room => {
         const username = document.getElementById('username').value;
 
         if (!formValidation(username, room)) {
@@ -29,7 +31,7 @@ const ActiveRooms = ({ socket }) => {
         });
 
         window.location.href = '/drawing-page';
-    }
+    }, []);
 
     return (
         <Styled.ActiveRoomsContainer>

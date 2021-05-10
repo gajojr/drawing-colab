@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import * as Styled from './Form.styles';
+
+import { SocketContext } from '../../../context/socket.js';
 
 // for reuse in ActiveRooms.component.jsx 
 export const formValidation = (username, room) => {
@@ -22,8 +24,10 @@ export const formValidation = (username, room) => {
     return true;
 }
 
-const Form = ({ socket }) => {
-    const onSubmit = e => {
+const Form = () => {
+    const socket = useContext(SocketContext);
+
+    const onSubmit = useCallback(e => {
         e.preventDefault();
 
         const username = e.target.username.value;
@@ -41,7 +45,7 @@ const Form = ({ socket }) => {
         });
 
         window.location.href = '/drawing-page';
-    }
+    }, []);
 
     return (
         <Styled.Form onSubmit={onSubmit} >

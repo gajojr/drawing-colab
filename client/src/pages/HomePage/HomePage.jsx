@@ -5,11 +5,11 @@ import ActiveRooms from '../../components/HomePageComponents/ActiveRooms/ActiveR
 
 import { Container } from './HomePage.styles';
 
-const HomePage = ({ socket }) => {
+const HomePage = () => {
     return (
         <Container>
-            <Form socket={socket} />
-            <ActiveRooms socket={socket} />
+            <Form />
+            <ActiveRooms />
         </Container>
     )
 }
