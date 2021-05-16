@@ -44,6 +44,10 @@ const Form = () => {
             }
         });
 
+        // because socket disconnects, we have to save this info and reconnect it on /drawing-page
+        localStorage.setItem('username', username);
+        localStorage.setItem('room', room);
+
         window.location.href = '/drawing-page';
     }, []);
 
