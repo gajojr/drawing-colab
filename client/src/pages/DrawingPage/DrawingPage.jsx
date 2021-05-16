@@ -1,9 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 
-// import BrushesPanel from '../../components/DrawingPageComponents/BrushesPanel/BrushesPanel.component';
-// import ColorsPanel from '../../components/DrawingPageComponents/ColorsPanel/ColorsPanel.component';
-// import DrawingCanvas from '../../components/DrawingPageComponents/DrawingCanvas/DrawingCanvas.component';
 import UsersNavbar from '../../components/DrawingPageComponents/UsersNavbar/UsersNavbar.component';
+import DrawingPanel from '../../components/DrawingPageComponents/DrawingPanel/DrawingPanel.component';
 
 import * as Styled from './DrawingPage.styles';
 
@@ -31,6 +29,7 @@ const DrawingPage = () => {
     return (
         <Styled.DrawingPage>
             <UsersNavbar />
+            <DrawingPanel />
         </Styled.DrawingPage>
     )
 }

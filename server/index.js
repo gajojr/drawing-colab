@@ -47,18 +47,18 @@ io.on('connection', socket => {
         // if it's new add it to the list of active rooms
         if (answer === user.room) {
             io.emit('showActiveRooms', getRooms());
+            user.role = 'admin';
         }
 
-        // io.to(user.room).emit('roomData', {
-        //     room: user.room,
-        //     users: getUsersInRoom(user.room)
-        // });
+        io.to(user.room).emit('roomData', {
+            user,
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        });
 
         callback();
     });
 
-    // registruje da je napustio kada se promeni adresa preko window.location.href = '/drawing-page'
-    // reason je transport close i kad promeni url i kad se zatvori prozor
     socket.on('disconnect', reason => {
         console.log(`reason: ${reason}`);
         const user = removeUser(socket.id);
