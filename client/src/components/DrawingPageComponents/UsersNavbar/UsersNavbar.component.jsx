@@ -15,11 +15,23 @@ const UsersNavbar = () => {
             if (role !== 'admin' && user.role === 'admin') {
                 setRole(user.role);
             }
-        })
+        });
+
+        socket.on('removedByRoomAdmin', () => {
+            socket.disconnect();
+            if (window.confirm('Admin has removed you from this room. Do you want to go to homescreen?')) {
+                window.location = '/';
+            }
+            else {
+                window.close();
+            }
+
+            // if dialog doesn't show up, by default redirect them to homepage
+            window.location = '/';
+        });
     }, []);
 
     const removeUser = useCallback((user) => {
-        console.log('user removed');
         socket.emit('userRemoved', user);
     }, []);
 
