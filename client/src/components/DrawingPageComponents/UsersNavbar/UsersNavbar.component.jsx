@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 
 import * as Styled from './UsersNavbar.styles';
 
@@ -10,18 +10,22 @@ const UsersNavbar = () => {
     const [role, setRole] = useState('');
 
     useEffect(() => {
-        socket.on('roomData', ({ user, room, users }) => {
+        socket.on('roomData', ({ user, users }) => {
             setUsers(users);
-            setRole(user.role);
+            if (role !== 'admin' && user.role === 'admin') {
+                setRole(user.role);
+            }
         })
-    }, [socket]);
+    }, []);
+
+    const removeUser = useCallback(() => console.log('user removed'), []);
 
     return (
         <Styled.Sidebar>
             <Styled.Caption>Users in this room:</Styled.Caption>
             {users.map((user, idx) => {
                 console.log(role, user.role);
-                return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => console.log('user removed')} />}</Styled.UserName>;
+                return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={removeUser} />}</Styled.UserName>;
             })}
         </Styled.Sidebar>
     )
