@@ -27,8 +27,16 @@ const addUser = ({ id, username, room }) => {
     return { user };
 }
 
-const removeUser = id => {
+const removeUserByID = id => {
     const index = users.findIndex(user => user.id === id);
+
+    if (index !== -1) {
+        return users.splice(index, 1)[0];
+    }
+}
+
+const removeUserByUsername = ({ username, room }) => {
+    const index = users.findIndex(user => user.room === room && user.username === username);
 
     if (index !== -1) {
         return users.splice(index, 1)[0];
@@ -64,7 +72,8 @@ const removeRoom = room => {
 
 module.exports = {
     addUser,
-    removeUser,
+    removeUserByID,
+    removeUserByUsername,
     getUser,
     getUsersInRoom,
     addRoom,

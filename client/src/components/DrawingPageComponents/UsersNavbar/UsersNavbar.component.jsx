@@ -18,14 +18,17 @@ const UsersNavbar = () => {
         })
     }, []);
 
-    const removeUser = useCallback(() => console.log('user removed'), []);
+    const removeUser = useCallback((user) => {
+        console.log('user removed');
+        socket.emit('userRemoved', user);
+    }, []);
 
     return (
         <Styled.Sidebar>
             <Styled.Caption>Users in this room:</Styled.Caption>
             {users.map((user, idx) => {
                 console.log(role, user.role);
-                return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={removeUser} />}</Styled.UserName>;
+                return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => removeUser(user)} />}</Styled.UserName>;
             })}
         </Styled.Sidebar>
     )

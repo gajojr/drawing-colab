@@ -7,7 +7,7 @@ const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
 
-const { addUser, removeUser, getUser, getUsersInRoom, addRoom, getRooms, removeRoom } = require('./utils/users');
+const { addUser, removeUserByID, removeUserByUsername, getUser, getUsersInRoom, addRoom, getRooms, removeRoom } = require('./utils/users');
 
 const PORT = process.env.PORT || 8080;
 
@@ -59,15 +59,26 @@ io.on('connection', socket => {
         callback();
     });
 
+    socket.on('userRemoved', userToRemove => {
+        const user = removeUserByUsername({ username: userToRemove.username, room: userToRemove.room });
+
+        io.to(user.room).emit('roomData', {
+            user,
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        });
+    });
+
     socket.on('disconnect', reason => {
         console.log(`reason: ${reason}`);
-        const user = removeUser(socket.id);
+        const user = removeUserByID(socket.id);
 
         if (user) {
-            // io.to(user.room).emit('roomData', {
-            //     room: user.room,
-            //     users: getUsersInRoom(user.room)
-            // });
+            io.to(user.room).emit('roomData', {
+                user,
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            });
 
             if (!io.sockets.adapter.rooms.get(user.room)) {
                 removeRoom(user.room);
