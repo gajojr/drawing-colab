@@ -18,6 +18,24 @@ const UsersNavbar = () => {
         });
     }, []);
 
+    useEffect(() => {
+        socket.on('roomJoinRequest', ({ username, socketId }) => {
+            console.log(`dobio sam zahtev od korisnika: ${username}`);
+            console.log(`role: ${role}`);
+            if (role === 'admin') {
+                console.log('uloga je admin');
+                if (window.confirm(`${username} sent the request to join, accept?`)) {
+                    console.log('prihvacen');
+                    socket.emit('acceptUser', ({ username, socketId }));
+                } else {
+                    console.log('odbiven');
+                    socket.emit('declineUser', socketId);
+                }
+            }
+        });
+    }, [role]);
+
+
     const removeUser = useCallback((user) => {
         socket.emit('userRemoved', user);
     }, []);
@@ -27,7 +45,6 @@ const UsersNavbar = () => {
             <Styled.UsersInfo>
                 <Styled.Caption>Users in this room:</Styled.Caption>
                 {users.map((user, idx) => {
-                    console.log(role, user.role);
                     return <Styled.UserName key={idx}>{user.username} {user.role && `(${user.role})`} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => removeUser(user)} />}</Styled.UserName>;
                 })}
             </Styled.UsersInfo>

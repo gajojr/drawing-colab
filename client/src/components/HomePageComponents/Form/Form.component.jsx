@@ -44,11 +44,17 @@ const Form = () => {
             }
         });
 
-        // because socket disconnects, we have to save this info and reconnect it on /drawing-page
-        localStorage.setItem('username', username);
-        localStorage.setItem('room', room);
+        socket.on('userAccepted', () => {
+            console.log('primljen sam, uraaaa!');
+            // because socket disconnects, we have to save this info and reconnect it on /drawing-page
+            localStorage.setItem('username', username);
+            localStorage.setItem('room', room);
+            window.location.href = '/drawing-page';
+        });
 
-        window.location.href = '/drawing-page';
+        socket.on('userDeclined', () => {
+            alert('You\'ve been declined');
+        });
     }, []);
 
     return (

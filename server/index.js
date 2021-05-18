@@ -35,28 +35,61 @@ io.on('connection', socket => {
     socket.emit('showActiveRooms', getRooms());
 
     socket.on('join', ({ username, room }, callback) => {
-        const { error, user } = addUser({ id: socket.id, username, room });
+        console.log(`ulazni log: `, getRooms().indexOf(room));
+        if (getRooms().indexOf(room) !== -1) {
+            console.log('poslao sam zahtev u postojecu sobu');
+            console.log(username, socket.id);
+            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
+        } else {
+            console.log('pravi se nova soba');
+            const { error, user } = addUser({ id: socket.id, username, room });
 
-        if (error) {
-            return callback(error);
+            if (error) {
+                return callback(error);
+            }
+
+            socket.join(user.room);
+            // check if this room is new
+            const answer = addRoom(user.room);
+            // if it's new add it to the list of active rooms
+            if (answer === user.room) {
+                io.emit('showActiveRooms', getRooms());
+                user.role = 'admin';
+            }
+
+            io.to(user.room).emit('roomData', {
+                user,
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            });
+
+            socket.emit('userAccepted');
+
+            callback();
         }
 
-        socket.join(user.room);
-        // check if this room is new
-        const answer = addRoom(user.room);
-        // if it's new add it to the list of active rooms
-        if (answer === user.room) {
-            io.emit('showActiveRooms', getRooms());
-            user.role = 'admin';
-        }
+        socket.on('acceptUser', ({ username, socketId }) => {
+            console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
+            console.log(username);
+            const { error, user } = addUser({ id: socketId, username, room });
 
-        io.to(user.room).emit('roomData', {
-            user,
-            room: user.room,
-            users: getUsersInRoom(user.room)
+            if (error) {
+                return callback(error);
+            }
+
+            // fix this to be other socket with socketId
+            // socket.join(user.room);
+
+            io.to(socketId).emit('userAccepted');
+
+            callback();
         });
 
-        callback();
+        socket.on('declineUser', socketId => {
+            console.log('odbijen sam u postojecoj sobi');
+            // socket.emit('userDeclined');
+            io.to(socketId).emit('userDeclined');
+        })
     });
 
     socket.on('userRemoved', userToRemove => {
@@ -76,7 +109,6 @@ io.on('connection', socket => {
         const user = removeUserByID(socket.id);
 
         if (user) {
-            console.log(`uloga korisnika: ${user.role}`);
             if (user.role === 'admin') {
                 io.to(user.room).emit('disconnectAllUsersInTheRoom');
             }
