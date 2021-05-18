@@ -28,7 +28,7 @@ const UsersNavbar = () => {
                 <Styled.Caption>Users in this room:</Styled.Caption>
                 {users.map((user, idx) => {
                     console.log(role, user.role);
-                    return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => removeUser(user)} />}</Styled.UserName>;
+                    return <Styled.UserName key={idx}>{user.username} {user.role && `(${user.role})`} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => removeUser(user)} />}</Styled.UserName>;
                 })}
             </Styled.UsersInfo>
             <Styled.LeaveButton onClick={() => {
