@@ -16,19 +16,6 @@ const UsersNavbar = () => {
                 setRole(user.role);
             }
         });
-
-        socket.on('removedByRoomAdmin', () => {
-            socket.disconnect();
-            if (window.confirm('Admin has removed you from this room. Do you want to go to homescreen?')) {
-                window.location = '/';
-            }
-            else {
-                window.close();
-            }
-
-            // if dialog doesn't show up, by default redirect them to homepage
-            window.location = '/';
-        });
     }, []);
 
     const removeUser = useCallback((user) => {
@@ -37,11 +24,19 @@ const UsersNavbar = () => {
 
     return (
         <Styled.Sidebar>
-            <Styled.Caption>Users in this room:</Styled.Caption>
-            {users.map((user, idx) => {
-                console.log(role, user.role);
-                return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => removeUser(user)} />}</Styled.UserName>;
-            })}
+            <Styled.UsersInfo>
+                <Styled.Caption>Users in this room:</Styled.Caption>
+                {users.map((user, idx) => {
+                    console.log(role, user.role);
+                    return <Styled.UserName key={idx}>{user.username} {user.role !== 'admin' && role === 'admin' && <Styled.StyledClose onClick={() => removeUser(user)} />}</Styled.UserName>;
+                })}
+            </Styled.UsersInfo>
+            <Styled.LeaveButton onClick={() => {
+                if (window.confirm('Are you sure you want to leave this room?')) {
+                    socket.disconnect()
+                    window.location = '/';
+                }
+            }}>Leave</Styled.LeaveButton>
         </Styled.Sidebar>
     )
 }

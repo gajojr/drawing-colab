@@ -76,6 +76,11 @@ io.on('connection', socket => {
         const user = removeUserByID(socket.id);
 
         if (user) {
+            console.log(`uloga korisnika: ${user.role}`);
+            if (user.role === 'admin') {
+                io.to(user.room).emit('disconnectAllUsersInTheRoom');
+            }
+
             io.to(user.room).emit('roomData', {
                 user,
                 room: user.room,
