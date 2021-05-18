@@ -39,7 +39,9 @@ io.on('connection', socket => {
         if (getRooms().indexOf(room) !== -1) {
             console.log('poslao sam zahtev u postojecu sobu');
             console.log(username, socket.id);
-            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
+            // kesirati socket od ovog sto trazi da se pridruzi grupi
+            // socket je preveliki da bi se prenosio
+            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id, requestorSocket: socket }));
         } else {
             console.log('pravi se nova soba');
             const { error, user } = addUser({ id: socket.id, username, room });
@@ -67,29 +69,32 @@ io.on('connection', socket => {
 
             callback();
         }
+    });
 
-        socket.on('acceptUser', ({ username, socketId }) => {
-            console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
-            console.log(username);
-            const { error, user } = addUser({ id: socketId, username, room });
+    socket.on('acceptUser', ({ username, socketId, requestorSocket }) => {
+        console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
+        console.log(username);
+        const { error, user } = addUser({ id: socketId, username, room });
 
-            if (error) {
-                return callback(error);
-            }
+        if (error) {
+            return callback(error);
+        }
 
-            // fix this to be other socket with socketId
-            // socket.join(user.room);
+        // koristi redis cache 
+        requestorSocket.join(user.room);
 
-            io.to(socketId).emit('userAccepted');
+        // io.sockets.connected[socketId].emit();
+        // koristi redis cache 
+        requestorSocket.emit('userAccepted');
 
-            callback();
-        });
+        callback();
+    });
 
-        socket.on('declineUser', socketId => {
-            console.log('odbijen sam u postojecoj sobi');
-            // socket.emit('userDeclined');
-            io.to(socketId).emit('userDeclined');
-        })
+    socket.on('declineUser', ({ socketId, requestorSocket }) => {
+        console.log('odbijen sam u postojecoj sobi');
+        // koristi redis cache 
+        // io.sockets.connected[socketId].emit();
+        requestorSocket.emit('userDeclined');
     });
 
     socket.on('userRemoved', userToRemove => {

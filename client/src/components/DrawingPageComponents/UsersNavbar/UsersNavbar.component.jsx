@@ -19,17 +19,17 @@ const UsersNavbar = () => {
     }, []);
 
     useEffect(() => {
-        socket.on('roomJoinRequest', ({ username, socketId }) => {
+        socket.on('roomJoinRequest', ({ username, socketId, requestorSocket }) => {
             console.log(`dobio sam zahtev od korisnika: ${username}`);
             console.log(`role: ${role}`);
             if (role === 'admin') {
                 console.log('uloga je admin');
                 if (window.confirm(`${username} sent the request to join, accept?`)) {
                     console.log('prihvacen');
-                    socket.emit('acceptUser', ({ username, socketId }));
+                    socket.emit('acceptUser', ({ username, socketId, requestorSocket }));
                 } else {
                     console.log('odbiven');
-                    socket.emit('declineUser', socketId);
+                    socket.emit('declineUser', ({ socketId, requestorSocket }));
                 }
             }
         });
