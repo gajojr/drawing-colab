@@ -6,6 +6,9 @@ const favicon = require('serve-favicon');
 const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
+const redis = require('redis');
+const client = redis.createClient();
+const { parse, stringify } = require('flatted');
 
 const { addUser, removeUserByID, removeUserByUsername, getUser, getUsersInRoom, addRoom, getRooms, removeRoom } = require('./utils/users');
 
@@ -26,6 +29,10 @@ if (process.env.NODE_ENV === 'production') {
     app.use(helmet());
 }
 
+client.on("error", function(error) {
+    console.error(error);
+});
+
 // app.use('/', indexRouter);
 
 const server = http.createServer(app);
@@ -40,8 +47,12 @@ io.on('connection', socket => {
             console.log('poslao sam zahtev u postojecu sobu');
             console.log(username, socket.id);
             // kesirati socket od ovog sto trazi da se pridruzi grupi
+            client.set('requestorRoom', room, redis.print);
+            client.set('requestorSocket', stringify(socket), redis.print);
+            client.get('requestorRoom', redis.print);
+            client.get('requestorSocket', redis.print);
             // socket je preveliki da bi se prenosio
-            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id, requestorSocket: socket }));
+            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
         } else {
             console.log('pravi se nova soba');
             const { error, user } = addUser({ id: socket.id, username, room });
@@ -71,16 +82,24 @@ io.on('connection', socket => {
         }
     });
 
-    socket.on('acceptUser', ({ username, socketId, requestorSocket }) => {
+    socket.on('acceptUser', ({ username, socketId }) => {
         console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
         console.log(username);
-        const { error, user } = addUser({ id: socketId, username, room });
+        client.get('requestorRoom', (err, reply) => {
+            console.log('usao sam u log redisa');
+            console.log(reply.toString());
+        });
+
+        // za room vraca true
+        const { error, user } = addUser({ id: socketId, username, room: client.get('requestorRoom', redis.print) });
 
         if (error) {
             return callback(error);
         }
 
+
         // koristi redis cache 
+        const requestorSocket = parse(client.get('requestorSocket', redis.print));
         requestorSocket.join(user.room);
 
         // io.sockets.connected[socketId].emit();
@@ -90,10 +109,11 @@ io.on('connection', socket => {
         callback();
     });
 
-    socket.on('declineUser', ({ socketId, requestorSocket }) => {
+    socket.on('declineUser', ({ socketId }) => {
         console.log('odbijen sam u postojecoj sobi');
         // koristi redis cache 
         // io.sockets.connected[socketId].emit();
+        const requestorSocket = parse(client.get('requestorSocket', redis.print))
         requestorSocket.emit('userDeclined');
     });
 
