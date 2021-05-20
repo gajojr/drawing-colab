@@ -70,6 +70,34 @@ io.on('connection', socket => {
         }
     });
 
+    // refactor the code because not all parts are necessary
+    socket.on('rejoin', ({ username, room }, callback) => {
+        const { error, user } = addUser({ id: socket.id, username, room });
+
+        if (error) {
+            return callback(error);
+        }
+
+        socket.join(user.room);
+        // check if this room is new
+        const answer = addRoom(user.room);
+        // if it's new add it to the list of active rooms
+        if (answer === user.room) {
+            io.emit('showActiveRooms', getRooms());
+            user.role = 'admin';
+        }
+
+        io.to(user.room).emit('roomData', {
+            user,
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        });
+
+        socket.emit('userAccepted');
+
+        callback();
+    });
+
     socket.on('acceptUser', ({ username, socketId }, callback) => {
         console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
         console.log(username);
@@ -86,11 +114,10 @@ io.on('connection', socket => {
             return callback(error);
         }
 
-        // EXPLORE THE STRUCTURE OF THE GIVEN RESULT AND FIND IF IT HAS JOIN METHOD
-
-        // const requestorSocket = io.sockets.sockets.get(socketId);
-        // requestorSocket.join(user.room);
-        // requestorSocket.emit('userAccepted');
+        const requestorSocket = io.sockets.sockets.get(socketId);
+        console.log(requestorSocket);
+        requestorSocket.join(user.room);
+        requestorSocket.emit('userAccepted');
 
         callback();
     });

@@ -14,7 +14,7 @@ const DrawingPage = () => {
         // we need to reconnect the socket because it was disconnected due url change.
         const username = localStorage.getItem('username');
         const room = localStorage.getItem('room');
-        socket.emit('join', { username, room }, error => {
+        socket.emit('rejoin', { username, room }, error => {
             if (error) {
                 alert(error);
                 window.location.href = '/';

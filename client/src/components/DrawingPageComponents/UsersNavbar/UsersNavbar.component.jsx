@@ -26,10 +26,20 @@ const UsersNavbar = () => {
                 console.log('uloga je admin');
                 if (window.confirm(`${username} sent the request to join, accept?`)) {
                     console.log('prihvacen');
-                    socket.emit('acceptUser', ({ username, socketId }));
+                    socket.emit('acceptUser', { username, socketId }, error => {
+                        if (error) {
+                            alert(error);
+                            window.location.href = '/';
+                        }
+                    });
                 } else {
                     console.log('odbiven');
-                    socket.emit('declineUser', ({ socketId }));
+                    socket.emit('declineUser', { socketId }, error => {
+                        if (error) {
+                            alert(error);
+                            window.location.href = '/';
+                        }
+                    });
                 }
             }
         });
