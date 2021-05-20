@@ -7,7 +7,7 @@ const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
 
-const { addUser, removeUserByID, removeUserByUsername, getUser, getUsersInRoom, addRoom, getRooms, removeRoom } = require('./utils/users');
+const { addUser, removeUserByID, removeUserByUsername, getUser, getUsersInRoom, addRoom, getRooms, removeRoom, compareRooms } = require('./utils/users');
 
 const PORT = process.env.PORT || 8080;
 
@@ -39,7 +39,6 @@ io.on('connection', socket => {
         if (getRooms().indexOf(room) !== -1) {
             console.log('poslao sam zahtev u postojecu sobu');
             console.log(username, socket.id);
-            // kesirati socket od ovog sto trazi da se pridruzi grupi
             // socket je preveliki da bi se prenosio
             io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
         } else {
@@ -71,29 +70,33 @@ io.on('connection', socket => {
         }
     });
 
-    socket.on('acceptUser', ({ username, socketId }) => {
+    socket.on('acceptUser', ({ username, socketId }, callback) => {
         console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
         console.log(username);
 
-        const { error, user } = addUser({ id: socketId, username, room: null });
+        const rooms = Array.from(io.sockets.adapter.rooms).map(([key, value]) => key);
+        const sids = Array.from(io.sockets.adapter.sids).map(([key, value]) => key);
+
+        const room = compareRooms(rooms, sids);
+        console.log(`trazena soba je ${room}`);
+
+        const { error, user } = addUser({ id: socketId, username, room });
 
         if (error) {
             return callback(error);
         }
 
-        // requestorSocket
-        // requestorSocket.join(user.room);
+        // EXPLORE THE STRUCTURE OF THE GIVEN RESULT AND FIND IF IT HAS JOIN METHOD
 
-        // io.sockets.connected[socketId].emit('userAccepted');
+        // const requestorSocket = io.sockets.sockets.get(socketId);
+        // requestorSocket.join(user.room);
         // requestorSocket.emit('userAccepted');
 
         callback();
     });
 
     socket.on('declineUser', ({ socketId }) => {
-        console.log('odbijen sam u postojecoj sobi');
         io.sockets.sockets.get(socketId).emit('userDeclined');
-        // requestorSocket.emit('userDeclined');
     });
 
     socket.on('userRemoved', userToRemove => {

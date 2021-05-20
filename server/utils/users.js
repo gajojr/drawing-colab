@@ -2,7 +2,6 @@ const users = [];
 const rooms = [];
 
 const addUser = ({ id, username, room }) => {
-    console.log(`Room in users: ${room}`);
     // clean the data
     username = username.trim().toLowerCase();
     room = room.trim().toLowerCase();
@@ -71,6 +70,18 @@ const removeRoom = room => {
     }
 }
 
+const compareRooms = (rooms, sids) => {
+    let roomToFind;
+    rooms.forEach(element => {
+        if (sids.indexOf(element) === -1) {
+            // dodati nesto da izadje iz petlje kad nadje
+            roomToFind = element;
+        }
+    });
+
+    return roomToFind;
+}
+
 module.exports = {
     addUser,
     removeUserByID,
@@ -79,5 +90,6 @@ module.exports = {
     getUsersInRoom,
     addRoom,
     getRooms,
-    removeRoom
+    removeRoom,
+    compareRooms
 }
