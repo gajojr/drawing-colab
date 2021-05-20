@@ -30,12 +30,16 @@ const ActiveRooms = () => {
             }
         });
 
-        socket.on('acceptUser', () => {
-            console.log('primljen sam, uraaaa2!');
+        socket.on('userAccepted', () => {
+            console.log('primljen sam, uraaaa!');
             // because socket disconnects, we have to save this info and reconnect it on /drawing-page
             localStorage.setItem('username', username);
             localStorage.setItem('room', room);
             window.location.href = '/drawing-page';
+        });
+
+        socket.on('userDeclined', () => {
+            alert('You\'ve been declined');
         });
     }, []);
 
