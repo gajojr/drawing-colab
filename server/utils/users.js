@@ -53,7 +53,7 @@ const getUsersInRoom = room => {
     return users.filter(user => user.room === room);
 }
 
-const addRoom = (room) => {
+const addRoom = room => {
     if (rooms.indexOf(room) === -1) {
         rooms.push(room);
 
@@ -72,12 +72,19 @@ const removeRoom = room => {
 
 const compareRooms = (rooms, sids) => {
     let roomToFind;
-    rooms.forEach(element => {
-        if (sids.indexOf(element) === -1) {
-            // dodati nesto da izadje iz petlje kad nadje
-            roomToFind = element;
+    // rooms.forEach(element => {
+    //     if (sids.indexOf(element) === -1) {
+    //         roomToFind = element;
+    //     }
+    // });
+
+    // this version should be more efficient since we can break when we find the room
+    for (let i = 0; i < rooms.length; i++) {
+        if (sids.indexOf(rooms[i]) === -1) {
+            roomToFind = rooms[i];
+            break;
         }
-    });
+    }
 
     return roomToFind;
 }

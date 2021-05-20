@@ -35,11 +35,7 @@ io.on('connection', socket => {
     socket.emit('showActiveRooms', getRooms());
 
     socket.on('join', ({ username, room }, callback) => {
-        console.log(`ulazni log: `, getRooms().indexOf(room));
         if (getRooms().indexOf(room) !== -1) {
-            console.log('poslao sam zahtev u postojecu sobu');
-            console.log(username, socket.id);
-            // socket je preveliki da bi se prenosio
             io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
         } else {
             console.log('pravi se nova soba');
@@ -70,7 +66,7 @@ io.on('connection', socket => {
         }
     });
 
-    // refactor the code because not all parts are necessary
+    // same logic as when creating the new room without emitting('userAccepted')
     socket.on('rejoin', ({ username, room }, callback) => {
         const { error, user } = addUser({ id: socket.id, username, room });
 
@@ -92,8 +88,6 @@ io.on('connection', socket => {
             room: user.room,
             users: getUsersInRoom(user.room)
         });
-
-        socket.emit('userAccepted');
 
         callback();
     });
