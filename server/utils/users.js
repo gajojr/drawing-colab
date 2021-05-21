@@ -16,6 +16,8 @@ const addUser = ({ id, username, room }) => {
     // check for existing user
     const existingUser = users.find(user => user.room === room && user.username === username);
     if (existingUser) {
+        console.log(existingUser.username, existingUser.room);
+        console.log(username, room);
         return {
             error: 'Username is in use'
         };
@@ -43,10 +45,12 @@ const removeUserByUsername = ({ username, room }) => {
     }
 }
 
-const getUser = id => {
+const getUserById = id => {
     const user = users.find(user => user.id === id);
     return user;
 }
+
+const getUserByUsername = username => users.find(user => user.username === username);
 
 const getUsersInRoom = room => {
     room = room.trim().toLowerCase();
@@ -72,13 +76,7 @@ const removeRoom = room => {
 
 const compareRooms = (rooms, sids) => {
     let roomToFind;
-    // rooms.forEach(element => {
-    //     if (sids.indexOf(element) === -1) {
-    //         roomToFind = element;
-    //     }
-    // });
 
-    // this version should be more efficient since we can break when we find the room
     for (let i = 0; i < rooms.length; i++) {
         if (sids.indexOf(rooms[i]) === -1) {
             roomToFind = rooms[i];
@@ -93,10 +91,10 @@ module.exports = {
     addUser,
     removeUserByID,
     removeUserByUsername,
-    getUser,
+    getUserById,
+    getUserByUsername,
     getUsersInRoom,
     addRoom,
     getRooms,
-    removeRoom,
-    compareRooms
+    removeRoom
 }

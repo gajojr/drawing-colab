@@ -7,7 +7,7 @@ const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
 
-const { addUser, removeUserByID, removeUserByUsername, getUser, getUsersInRoom, addRoom, getRooms, removeRoom, compareRooms } = require('./utils/users');
+const { addUser, removeUserByID, removeUserByUsername, getUserById, getUserByUsername, getUsersInRoom, addRoom, getRooms, removeRoom } = require('./utils/users');
 
 const PORT = process.env.PORT || 8080;
 
@@ -36,7 +36,11 @@ io.on('connection', socket => {
 
     socket.on('join', ({ username, room }, callback) => {
         if (getRooms().indexOf(room) !== -1) {
-            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
+            const usersInRoom = getUsersInRoom(room);
+            if (usersInRoom.some(user => user.username === username)) {
+                return callback('Username is in use');
+            }
+            io.to(room).emit('roomJoinRequest', ({ socketId: socket.id }));
         } else {
             console.log('pravi se nova soba');
             const { error, user } = addUser({ id: socket.id, username, room });
@@ -54,12 +58,6 @@ io.on('connection', socket => {
                 user.role = 'admin';
             }
 
-            io.to(user.room).emit('roomData', {
-                user,
-                room: user.room,
-                users: getUsersInRoom(user.room)
-            });
-
             socket.emit('userAccepted');
 
             callback();
@@ -74,50 +72,43 @@ io.on('connection', socket => {
             return callback(error);
         }
 
-        socket.join(user.room);
+        socket.join(room);
         // check if this room is new
-        const answer = addRoom(user.room);
+        const answer = addRoom(room);
         // if it's new add it to the list of active rooms
-        if (answer === user.room) {
+        if (answer === room) {
             io.emit('showActiveRooms', getRooms());
             user.role = 'admin';
         }
 
-        io.to(user.room).emit('roomData', {
+        io.to(room).emit('roomData', {
             user,
-            room: user.room,
-            users: getUsersInRoom(user.room)
+            room,
+            users: getUsersInRoom(room)
         });
 
         callback();
     });
 
-    socket.on('acceptUser', ({ username, socketId }, callback) => {
-        console.log('primljen sam u postojecu sobu, id socketa je: ', socketId);
-        console.log(username);
-
-        const rooms = Array.from(io.sockets.adapter.rooms).map(([key, value]) => key);
-        const sids = Array.from(io.sockets.adapter.sids).map(([key, value]) => key);
-
-        const room = compareRooms(rooms, sids);
-        console.log(`trazena soba je ${room}`);
-
-        const { error, user } = addUser({ id: socketId, username, room });
-
-        if (error) {
-            return callback(error);
+    socket.on('acceptUser', ({ socketId }, callback) => {
+        try {
+            // TypeError: Cannot read property 'join' of undefined
+            const requestorSocket = io.sockets.sockets.get(socketId);
+            requestorSocket.emit('userAccepted');
+        } catch (err) {
+            console.log(err);
         }
-
-        const requestorSocket = io.sockets.sockets.get(socketId);
-        console.log(requestorSocket);
-        requestorSocket.join(user.room);
-        requestorSocket.emit('userAccepted');
 
         callback();
     });
 
     socket.on('declineUser', ({ socketId }) => {
-        io.sockets.sockets.get(socketId).emit('userDeclined');
+        console.log(`ovde puca: ${socketId}`)
+        try {
+            io.sockets.sockets.get(socketId).emit('userDeclined');
+        } catch (err) {
+            console.log(err);
+        }
     });
 
     socket.on('userRemoved', userToRemove => {

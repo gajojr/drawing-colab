@@ -28,11 +28,7 @@ const DrawingPage = () => {
         // when admin presses X button next to username
         socket.on('removedByRoomAdmin', () => {
             socket.disconnect();
-            if (!window.confirm('Admin has removed you from this room. Do you want to go to homescreen?')) {
-                window.close();
-            }
-
-            // if dialog doesn't show up, by default redirect them to homepage
+            alert('Admin has removed you from this room. You will now be redirected to homescreen');
             window.location = '/';
         });
 

@@ -19,32 +19,35 @@ const UsersNavbar = () => {
     }, []);
 
     useEffect(() => {
-        socket.on('roomJoinRequest', ({ username, socketId }) => {
-            console.log(`dobio sam zahtev od korisnika: ${username}`);
-            console.log(`role: ${role}`);
-            if (role === 'admin') {
-                console.log('uloga je admin');
-                if (window.confirm(`${username} sent the request to join, accept?`)) {
-                    console.log('prihvacen');
-                    socket.emit('acceptUser', { username, socketId }, error => {
+        socket.on('roomJoinRequest', ({ socketId }) => {
+            // sometimes socketId isn't provided
+            console.log(socketId)
+            if (role === 'admin' && socketId) {
+                console.log(socketId)
+                document.getElementById('joinRequestDialog').style.display = 'flex';
+
+                document.getElementById('acceptUser').addEventListener('click', () => {
+                    document.getElementById('joinRequestDialog').style.display = 'none';
+                    socket.emit('acceptUser', { socketId }, error => {
                         if (error) {
                             alert(error);
                             window.location.href = '/';
                         }
                     });
-                } else {
-                    console.log('odbiven');
+                });
+
+                document.getElementById('declineUser').addEventListener('click', () => {
+                    document.getElementById('joinRequestDialog').style.display = 'none';
                     socket.emit('declineUser', { socketId }, error => {
                         if (error) {
                             alert(error);
                             window.location.href = '/';
                         }
                     });
-                }
+                });
             }
         });
     }, [role]);
-
 
     const removeUser = useCallback((user) => {
         socket.emit('userRemoved', user);
@@ -64,6 +67,14 @@ const UsersNavbar = () => {
                     window.location = '/';
                 }
             }}>Leave</Styled.LeaveButton>
+
+            <Styled.JoinRequest id='joinRequestDialog' style={{ display: 'none' }}>
+                <Styled.Message>
+                    New user wants to join, accept?
+                </Styled.Message>
+                <Styled.AcceptIcon id='acceptUser' />
+                <Styled.DeclineIcon id='declineUser' />
+            </Styled.JoinRequest>
         </Styled.Sidebar>
     )
 }

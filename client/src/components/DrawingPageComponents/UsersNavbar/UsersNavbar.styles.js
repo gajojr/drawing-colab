@@ -1,5 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
 import { IoMdClose } from 'react-icons/io';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { TiTick } from 'react-icons/ti';
 
 export const Sidebar = styled.aside `
     background-color: #7C5CBF;
@@ -58,4 +61,50 @@ export const LeaveButton = styled.button `
     &:hover {
         cursor: pointer;
     }
+`;
+
+export const JoinRequest = styled.div `
+    background-color: #7868e6;
+    padding: 20px 40px;
+    width: 20%;
+    position: absolute; 
+    right: 0px;
+    top: 10px;
+    border-radius: 4px;
+    border-left: 8px solid #b8b5ff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+
+    @media (max-width: 768px) {
+        width: 40%;
+        padding: 5px 10px;
+        justify-content: space-between;
+    }
+`;
+
+export const Message = styled.span `
+    padding: 0 20px;
+    font-size: 18px;
+    font-weight: 600;
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
+`;
+const iconsStyle = css `
+    &:hover {
+        cursor: pointer;
+    }
+`;
+
+export const AcceptIcon = styled(TiTick)
+`${iconsStyle}
+margin-right: 10px;
+font-size: 32px`;
+
+export const DeclineIcon = styled(AiOutlineCloseCircle)
+`${iconsStyle}
+font-size: 28px;
 `;
