@@ -58,7 +58,7 @@ const Form = () => {
     }, []);
 
     return (
-        <Styled.Form onSubmit={onSubmit} >
+        <Styled.Form onSubmit={onSubmit} id='form'>
             <Styled.Legend>Drawing collab</Styled.Legend>
             <Styled.Label htmlFor="username">username:</Styled.Label>
             <Styled.TextInput id="username" type="text" required />

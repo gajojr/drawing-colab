@@ -11,7 +11,6 @@ const ActiveRooms = () => {
 
     useEffect(() => {
         socket.on('showActiveRooms', data => {
-            console.log(`sobe: ${data}`);
             setActiveRooms(data);
         });
     }, []);
@@ -23,6 +22,12 @@ const ActiveRooms = () => {
             return;
         }
 
+        // show loading animation
+        document.getElementById('form').style.display = 'none';
+        document.getElementById('header').style.display = 'none';
+        document.getElementById('active_rooms_list').style.display = 'none';
+        document.getElementById('loading').style.display = 'flex';
+
         socket.emit('join', { username, room }, error => {
             if (error) {
                 alert(error);
@@ -31,7 +36,6 @@ const ActiveRooms = () => {
         });
 
         socket.on('userAccepted', () => {
-            console.log('primljen sam, uraaaa!');
             // because socket disconnects, we have to save this info and reconnect it on /drawing-page
             localStorage.setItem('username', username);
             localStorage.setItem('room', room);
@@ -40,13 +44,15 @@ const ActiveRooms = () => {
 
         socket.on('userDeclined', () => {
             alert('You\'ve been declined');
+            // reload page elements and remove animation this way
+            window.location.reload();
         });
     }, []);
 
     return (
-        <Styled.ActiveRoomsContainer>
-            <Styled.Header>{activeRooms.length ? `Active rooms:` : null}</Styled.Header>
-            <Styled.ListOfRooms style={{ overflowY: activeRooms.length < 4 ? 'hidden' : 'scroll' }}>
+        <Styled.ActiveRoomsContainer >
+            <Styled.Header id='header'>{activeRooms.length ? `Active rooms:` : null}</Styled.Header>
+            <Styled.ListOfRooms id='active_rooms_list' style={{ overflowY: activeRooms.length < 4 ? 'hidden' : 'scroll' }}>
                 {activeRooms.map((item, idx) => (
                     <Styled.ListItem key={idx}>
                         <Styled.RoomName>
@@ -57,6 +63,12 @@ const ActiveRooms = () => {
                     </Styled.ListItem>)
                 )}
             </Styled.ListOfRooms>
+            <Styled.Loading id='loading' style={{ display: 'none' }}>
+                <Styled.LoadingText>Waiting for room admin to accept the request</Styled.LoadingText>
+                <Styled.LoadAnimation>
+                    {/* diplay only when user is waiting to join the room */}
+                </Styled.LoadAnimation>
+            </Styled.Loading>
         </Styled.ActiveRoomsContainer>
     )
 }
