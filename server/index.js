@@ -42,7 +42,6 @@ io.on('connection', socket => {
             }
             io.to(room).emit('roomJoinRequest', ({ socketId: socket.id }));
         } else {
-            console.log('pravi se nova soba');
             const { error, user } = addUser({ id: socket.id, username, room });
 
             if (error) {
@@ -103,7 +102,6 @@ io.on('connection', socket => {
     });
 
     socket.on('declineUser', ({ socketId }) => {
-        console.log(`ovde puca: ${socketId}`)
         try {
             io.sockets.sockets.get(socketId).emit('userDeclined');
         } catch (err) {
