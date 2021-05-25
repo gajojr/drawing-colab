@@ -40,7 +40,7 @@ io.on('connection', socket => {
             if (usersInRoom.some(user => user.username === username)) {
                 return callback('Username is in use');
             }
-            io.to(room).emit('roomJoinRequest', ({ socketId: socket.id }));
+            io.to(room).emit('roomJoinRequest', ({ username, socketId: socket.id }));
         } else {
             const { error, user } = addUser({ id: socket.id, username, room });
 

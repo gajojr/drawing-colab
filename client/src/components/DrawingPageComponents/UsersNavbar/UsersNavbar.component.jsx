@@ -19,12 +19,10 @@ const UsersNavbar = () => {
     }, []);
 
     useEffect(() => {
-        socket.on('roomJoinRequest', ({ socketId }) => {
-            // sometimes socketId isn't provided
-            console.log(socketId)
+        socket.on('roomJoinRequest', ({ username, socketId }) => {
             if (role === 'admin' && socketId) {
-                console.log(socketId)
                 document.getElementById('joinRequestDialog').style.display = 'flex';
+                document.getElementById('message').innerText = `${username} wants to join, accept?`;
 
                 document.getElementById('acceptUser').addEventListener('click', () => {
                     document.getElementById('joinRequestDialog').style.display = 'none';
@@ -69,9 +67,7 @@ const UsersNavbar = () => {
             }}>Leave</Styled.LeaveButton>
 
             <Styled.JoinRequest id='joinRequestDialog' style={{ display: 'none' }}>
-                <Styled.Message>
-                    New user wants to join, accept?
-                </Styled.Message>
+                <Styled.Message id='message'></Styled.Message>
                 <Styled.AcceptIcon id='acceptUser' />
                 <Styled.DeclineIcon id='declineUser' />
             </Styled.JoinRequest>
