@@ -1,10 +1,12 @@
 import React from 'react';
 
+import { Canvas } from './Canvas.styles.js';
+
 const DrawingCanvas = () => {
     return (
-        <div>
+        <Canvas>
             This is drawing canvas
-        </div>
+        </Canvas>
     )
 }
 

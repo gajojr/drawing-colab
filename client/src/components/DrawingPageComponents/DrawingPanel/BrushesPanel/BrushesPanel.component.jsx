@@ -1,10 +1,12 @@
 import React from 'react';
 
+import { BrushesContainer } from './BrushesPanel.styling';
+
 const BrushesPanel = () => {
     return (
-        <div>
+        <BrushesContainer>
             This is brushes panel
-        </div>
+        </BrushesContainer>
     )
 }
 

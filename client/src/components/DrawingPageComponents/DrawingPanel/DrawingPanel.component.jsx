@@ -2,15 +2,19 @@ import React from 'react';
 
 import BrushesPanel from './BrushesPanel/BrushesPanel.component';
 import Canvas from './Canvas/Canvas.component';
-import ColorsPalette from './ColorsPalette/ColorsPalette.component';
+import ColorPicker from './ColorPicker/ColorPicker.component';
+
+import { DrawingPanelContainer, SettingsPanel } from './DrawingPanel.styles';
 
 const DrawingPanel = () => {
     return (
-        <div>
-            <ColorsPalette />
-            <BrushesPanel />
+        <DrawingPanelContainer>
+            <SettingsPanel>
+                <ColorPicker />
+                <BrushesPanel />
+            </SettingsPanel>
             <Canvas />
-        </div>
+        </DrawingPanelContainer>
     )
 }
 
