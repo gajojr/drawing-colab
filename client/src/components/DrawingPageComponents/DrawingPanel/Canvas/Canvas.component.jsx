@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Canvas } from './Canvas.styles.js';
+import { Canvas, Info } from './Canvas.styles.js';
 
 const DrawingCanvas = () => {
     return (
         <Canvas>
-            This is drawing canvas
+            <Info>Draw here</Info>
         </Canvas>
     )
 }

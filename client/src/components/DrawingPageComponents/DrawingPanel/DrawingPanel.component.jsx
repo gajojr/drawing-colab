@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BrushesPanel from './BrushesPanel/BrushesPanel.component';
 import Canvas from './Canvas/Canvas.component';
 import ColorPicker from './ColorPicker/ColorPicker.component';
 
@@ -11,7 +10,6 @@ const DrawingPanel = () => {
         <DrawingPanelContainer>
             <SettingsPanel>
                 <ColorPicker />
-                <BrushesPanel />
             </SettingsPanel>
             <Canvas />
         </DrawingPanelContainer>
