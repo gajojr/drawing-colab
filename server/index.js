@@ -11,8 +11,6 @@ const { addUser, removeUserByID, removeUserByUsername, getUserById, getUserByUse
 
 const PORT = process.env.PORT || 8080;
 
-// const indexRouter = require('./routes/index');
-
 const app = express();
 
 app.use(express.json());
@@ -26,7 +24,14 @@ if (process.env.NODE_ENV === 'production') {
     app.use(helmet());
 }
 
-// app.use('/', indexRouter);
+if (process.env.NODE_ENV === 'production') {
+    // Serve any static files
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    // Handle React routing, return all requests to React app
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    });
+}
 
 const server = http.createServer(app);
 const io = socketIo(server);
