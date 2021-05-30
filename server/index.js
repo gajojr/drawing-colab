@@ -142,6 +142,11 @@ io.on('connection', socket => {
             }
         }
     });
+
+    socket.on('canvas-data', data => {
+        const user = getUserById(socket.id);
+        io.to(user.room).emit('canvas-data', data);
+    });
 });
 
 server.listen(PORT, () => {

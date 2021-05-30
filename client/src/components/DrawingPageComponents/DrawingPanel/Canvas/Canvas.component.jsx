@@ -1,29 +1,34 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { Canvas } from './Canvas.styles.js';
+import { SocketContext } from '../../../../context/socket';
 
 const DrawingCanvas = () => {
+    const socket = useContext(SocketContext);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
 
     useEffect(() => {
-        const width = document.getElementById('canvas').innerWidth;
-        const height = document.getElementById('canvas').innerHeight;
+        const canvas = canvasRef.current;
 
-        const canvas = canvasRef.current
-        canvas.width = width * 2;
-        canvas.height = height * 2;
+        const width = document.getElementById('canvas').offsetWidth;
+        const height = document.getElementById('canvas').offsetHeight;
 
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
+        canvas.width = width;
+        canvas.height = height;
 
-        const context = canvas.getContext('2d')
-        context.scale(2, 2);
+        const context = canvas.getContext('2d');
         context.lineCap = 'round';
         context.strokeStyle = 'black';
         context.lineWidth = 5;
         contextRef.current = context;
+
+        socket.on('canvas-data', data => {
+            const image = new Image();
+            image.onload = () => context.drawImage(image, 0, 0);
+            image.src = data;
+        });
     }, []);
 
     const startDrawing = ({ nativeEvent }) => {
@@ -36,6 +41,11 @@ const DrawingCanvas = () => {
     const finishDrawing = () => {
         contextRef.current.closePath();
         setIsDrawing(false);
+
+        const canvas = document.getElementById('canvas');
+        const base64ImageData = canvas.toDataURL('image/png');
+        console.log(base64ImageData);
+        socket.emit('canvas-data', base64ImageData);
     }
 
     const draw = ({ nativeEvent }) => {
