@@ -29,6 +29,10 @@ const DrawingCanvas = () => {
             image.onload = () => context.drawImage(image, 0, 0);
             image.src = data;
         });
+
+        socket.on('clear-canvas', () => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        });
     }, []);
 
     const startDrawing = ({ nativeEvent }) => {

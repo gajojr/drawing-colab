@@ -5,4 +5,5 @@ export const Canvas = styled.canvas `
     height: 100%;
     border: 3px solid #000;
     box-sizing: border-box;
+    background-color: #fff;
 `;
