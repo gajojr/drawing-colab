@@ -33,6 +33,8 @@ const DrawingCanvas = () => {
 
     const startDrawing = ({ nativeEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
+        const currentColor = document.getElementById('currentColor').innerText.replace('Current pick: ', '');
+        contextRef.current.strokeStyle = currentColor;
         contextRef.current.beginPath();
         contextRef.current.moveTo(offsetX, offsetY);
         setIsDrawing(true);
@@ -44,7 +46,6 @@ const DrawingCanvas = () => {
 
         const canvas = document.getElementById('canvas');
         const base64ImageData = canvas.toDataURL('image/png');
-        console.log(base64ImageData);
         socket.emit('canvas-data', base64ImageData);
     }
 

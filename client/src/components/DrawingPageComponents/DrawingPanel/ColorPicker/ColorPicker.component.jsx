@@ -20,7 +20,7 @@ const ColorPicker = () => {
                     />
                 </div>
             }
-            <CurrentPick>Current pick: {color}</CurrentPick>
+            <CurrentPick id='currentColor'>Current pick: {color}</CurrentPick>
         </ColorPickerContainer>
     )
 }

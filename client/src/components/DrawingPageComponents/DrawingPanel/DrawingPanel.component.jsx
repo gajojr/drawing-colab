@@ -8,7 +8,7 @@ import { DrawingPanelContainer, SettingsPanel } from './DrawingPanel.styles';
 const DrawingPanel = () => {
     return (
         <DrawingPanelContainer>
-            <SettingsPanel>
+            <SettingsPanel id='settings-panel'>
                 <ColorPicker />
             </SettingsPanel>
             <Canvas />
