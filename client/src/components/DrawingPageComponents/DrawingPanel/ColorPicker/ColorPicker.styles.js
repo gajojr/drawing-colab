@@ -11,7 +11,6 @@ export const ToggleButton = styled.button `
     border-radius: 5px;
     border: none;
     padding: 7px;
-    align-self: flex-end;
     margin: 5px 5px 0 0;
 
     &:hover {
