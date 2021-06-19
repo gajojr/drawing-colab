@@ -5,7 +5,7 @@ import { ChromePicker } from 'react-color';
 import { ColorPickerContainer, ToggleButton, CurrentPick } from './ColorPicker.styles';
 
 const ColorPicker = () => {
-    const [color, setColor] = useState('#fff');
+    const [color, setColor] = useState('#000');
     const [showColorPicker, setShowColorPicker] = useState(false);
 
     return (
@@ -20,7 +20,7 @@ const ColorPicker = () => {
                     />
                 </div>
             }
-            <CurrentPick id='currentColor'>Current pick: {color}</CurrentPick>
+            <CurrentPick id='currentColor'>Current pick: {color} <div style={{ height: 15, width: 15, backgroundColor: color }}></div></CurrentPick>
         </ColorPickerContainer>
     )
 }

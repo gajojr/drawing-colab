@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 
 import Canvas from './Canvas/Canvas.component';
 import ColorPicker from './ColorPicker/ColorPicker.component';
+import BrushSizePicker from './BrushSizePicker/BrushSizePicker.component';
 
 import { SocketContext } from '../../../context/socket';
 
@@ -14,6 +15,7 @@ const DrawingPanel = () => {
         <DrawingPanelContainer>
             <SettingsPanel id='settings-panel'>
                 <ColorPicker />
+                <BrushSizePicker />
             </SettingsPanel>
             <ClearCanvasBtn onClick={() => socket.emit('clear-canvas')}>clear canvas</ClearCanvasBtn>
             <Canvas />

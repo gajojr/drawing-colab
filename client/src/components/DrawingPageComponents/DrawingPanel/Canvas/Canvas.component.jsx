@@ -38,7 +38,9 @@ const DrawingCanvas = () => {
     const startDrawing = ({ nativeEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
         const currentColor = document.getElementById('currentColor').innerText.replace('Current pick: ', '');
+        const currentBrushSize = document.getElementById('brush_size').value;
         contextRef.current.strokeStyle = currentColor;
+        contextRef.current.lineWidth = currentBrushSize;
         contextRef.current.beginPath();
         contextRef.current.moveTo(offsetX, offsetY);
         setIsDrawing(true);
